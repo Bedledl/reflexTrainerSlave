@@ -1,0 +1,44 @@
+{
+  "version": 4,
+  "configurePresets": [
+    {
+      "name": "default-avr",
+      "displayName": "AVR Embedded Build",
+      "description": "Uses avr-g++ and avr-gcc for embedded compilation.",
+      "cacheVariables": {
+        "CMAKE_SYSTEM_NAME": "Generic",
+        "CMAKE_C_COMPILER": "avr-gcc",
+        "CMAKE_CXX_COMPILER": "avr-g++",
+        "CMAKE_CXX_FLAGS": " -DF_CPU=1000000UL -mmcu=atmega328p -Os -Wall -Wextra -Werror",
+        "CMAKE_FIND_ROOT_PATH_MODE_PROGRAM": "NEVER",
+        "CMAKE_FIND_ROOT_PATH_MODE_LIBRARY": "ONLY",
+        "CMAKE_FIND_ROOT_PATH_MODE_INCLUDE": "ONLY",
+        "CROSS_COMPILING": "TRUE"
+      }
+    },
+    {
+      "name": "host-test",
+      "displayName": "Host Unit Test Build",
+      "description": "Uses the default host g++ for running unit tests.",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "gcc",
+        "CMAKE_CXX_COMPILER": "g++",
+        "CROSS_COMPILING": "FALSE"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "default-avr",
+      "configurePreset": "default-avr"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "host-test",
+      "configurePreset": "host-test",
+      "output": {"outputOnFailure": true},
+      "execution": {"noTestsAction": "error", "stopOnFailure": true}
+    }
+  ]
+}
