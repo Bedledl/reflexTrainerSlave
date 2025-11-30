@@ -1,6 +1,7 @@
 #include "avrTimerAdapterClock.h"
 #include "avrTimerAdapterTimer.h"
 #include <avr/interrupt.h>
+#include "timers.h"
 
 TimerUtils::AvrTimerInterface16Bit Timer1Interface =
 {
