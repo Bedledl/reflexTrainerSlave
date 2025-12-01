@@ -18,8 +18,8 @@ void AvrTimerAdapterClock::overflowHandler()
 
 void AvrTimerAdapterClock::inputCaptureInterruptHandler()
 {
-    auto cb = inputCaptureCallback;
-    if (cb != nullptr) {
+    if (inputCaptureCallback != nullptr) {
+        auto cb = inputCaptureCallback;
         inputCaptureCallback = nullptr;
         cb();
     }

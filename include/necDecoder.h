@@ -1,3 +1,6 @@
+#ifndef NEC_DECODER_H
+#define NEC_DECODER_H
+
 #include "stdint.h"
 #include "avrTimerAdapterClock.h"
 
@@ -47,6 +50,6 @@ private:
 
 extern NecDecoder theOneAndOnlyNecDecoder;
 
-void necInputInterrupt() {
-    theOneAndOnlyNecDecoder.irInputCallback();
-}
+void necInputInterrupt();
+
+#endif // NEC_DECODER_H

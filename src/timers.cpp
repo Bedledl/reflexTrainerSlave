@@ -38,9 +38,9 @@ ISR(TIMER1_OVF_vect) {
 	clock.overflowHandler();
 }
 
-ISR(TIMER1 CAPT_vect) {
-
-}   clock.inputCaptureInterruptHandler();
+ISR(TIMER1_CAPT_vect) {
+    clock.inputCaptureInterruptHandler();
+}
 
 ISR(TIMER0_COMPA_vect) {
 	avrTimer0.compareMatchHandlerA();

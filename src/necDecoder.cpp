@@ -6,6 +6,11 @@ typedef AvrTimerAdapterClock::EdgeType EdgeType;
 
 NecDecoder theOneAndOnlyNecDecoder;
 
+void necInputInterrupt()
+{
+    theOneAndOnlyNecDecoder.irInputCallback();
+}
+
 void NecDecoder::waitForNecHeader()
 {
     resetToWaitingForInitialBurst();
@@ -23,13 +28,11 @@ bool NecDecoder::fitsExpectedTime(const uint64_t &actualDurationMicros, const ui
 
 void NecDecoder::enableInputInterrupt(EdgeType edgeType)
 {
-    (void) edgeType;
-    //TODO
-    // clock.enableInputCaptureInterrupts(
-    //     edgeType,
-    //     &necInputInterrupt,
-    //     true // noise cancelling
-    // );
+    clock.enableInputCaptureInterrupts(
+         edgeType,
+         [](){theOneAndOnlyNecDecoder.irInputCallback();},
+         true // noise cancelling
+     );
     // TODO make something with result
 }
 
