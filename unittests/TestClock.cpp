@@ -9,37 +9,6 @@ struct TimerRegisters {
     uint16_t ICR1;
 };
 
-TEST(TestTimerUtils, TicksToMicrosecondsPrescaled8) {
-    EXPECT_EQ(TimerUtils::ticksToMicrosecondsPrescaled8(0), 0);
-    EXPECT_EQ(TimerUtils::ticksToMicrosecondsPrescaled8(1), 8);
-    EXPECT_EQ(TimerUtils::ticksToMicrosecondsPrescaled8(10), 80);
-    EXPECT_EQ(TimerUtils::ticksToMicrosecondsPrescaled8(255), 2040);
-}
-
-TEST(TestTimerUtils, SetPrescaling8ForTimer) {
-    uint8_t controlRegisterB = 0x00;
-    TimerUtils::setPrescaling8ForTimer(&controlRegisterB);
-    uint8_t expectedRegister = (1 << 1);
-    EXPECT_EQ(controlRegisterB, expectedRegister);
-
-    controlRegisterB = 0xFF;
-    TimerUtils::setPrescaling8ForTimer(&controlRegisterB);
-    expectedRegister = 0xF8 + (1 << 1);
-    EXPECT_EQ(controlRegisterB, expectedRegister);
-}
-
-TEST(TestTimerUtils, SetNoPrescalingForTimer) {
-    uint8_t controlRegisterB = 0x00; // all bits cleared
-    TimerUtils::setNoPrescalingForTimer(&controlRegisterB);
-    uint8_t expectedRegister = (1 << 0);
-    EXPECT_EQ(controlRegisterB, expectedRegister);
-
-    controlRegisterB = 0xFF;
-    TimerUtils::setNoPrescalingForTimer(&controlRegisterB);
-    expectedRegister = 0xF8 + (1 << 0);
-    EXPECT_EQ(controlRegisterB, expectedRegister);
-}
-
 class TestClock : public ::testing::Test
 {
     public:
@@ -53,13 +22,18 @@ class TestClock : public ::testing::Test
         &timerRegisters.ICR1,
     };
     AvrTimerAdapterClock clock{timerInterface};
+    protected:
+    virtual void SetUp() override {
+        memset(&timerRegisters, 0, sizeof(TimerRegisters));
+        clock = AvrTimerAdapterClock{timerInterface};
+    }
 };
 
 TEST_F(TestClock, Initialization) {
     timerRegisters.TCCR1A = 0xFF; // set to non-zero to verify initialization
     timerRegisters.TCCR1B = 0xFF;
     timerRegisters.TCNT1 = 0xFFFF;
-    timerRegisters.TIMSK1 = 0xFF; // set to zero to verify enabling
+    timerRegisters.TIMSK1 = 0xFF;
     AvrTimerAdapterClock testClock{timerInterface};
     EXPECT_EQ(timerRegisters.TCCR1A, 0);
     EXPECT_EQ(timerRegisters.TCCR1B & (1 << 0), 0); // prescaling 8

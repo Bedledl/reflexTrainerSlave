@@ -8,6 +8,9 @@ AvrTimerAdapterClock::AvrTimerAdapterClock(TimerUtils::AvrTimerInterface16Bit ti
     *(timerInterface.counterRegister) = 0x0;
     TimerUtils::setPrescaling8ForTimer(timerInterface.controlRegisterB);
     *(timerInterface.interruptMaskRegister) |= (1 << TOIE1); // allow interrupts on overflow
+    // disable interrups on compare match
+    *(timerInterface.interruptMaskRegister) &= ~(1 << OCIE0A);
+    *(timerInterface.interruptMaskRegister) &= ~(1 << OCIE0B);
     disableInputCaptureInterrupts();
 }
 

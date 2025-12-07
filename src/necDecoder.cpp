@@ -1,6 +1,5 @@
 #include "necDecoder.h"
 #include "timers.h"
-#include <functional>
 
 typedef AvrTimerAdapterClock::EdgeType EdgeType;
 
@@ -28,11 +27,12 @@ bool NecDecoder::fitsExpectedTime(const uint64_t &actualDurationMicros, const ui
 
 void NecDecoder::enableInputInterrupt(EdgeType edgeType)
 {
-    clock.enableInputCaptureInterrupts(
-         edgeType,
-         [](){theOneAndOnlyNecDecoder.irInputCallback();},
-         true // noise cancelling
-     );
+    (void)edgeType;
+    // clock.enableInputCaptureInterrupts(
+    //      edgeType,
+    //      [](){},//theOneAndOnlyNecDecoder.irInputCallback();
+    //      true // noise cancelling
+    //  );
     // TODO make something with result
 }
 

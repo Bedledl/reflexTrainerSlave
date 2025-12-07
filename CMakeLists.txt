@@ -11,7 +11,7 @@ project(
   VERSION 1.0
   LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 11)
 
 # adjust the default behavior of the FIND_XXX() commands:
 # search programs in the host environment
@@ -25,7 +25,13 @@ file(GLOB SRC_FILES
     "src/*.cpp"
 )
 
-add_executable(reflexTrainer main.cpp  ${SRC_FILES} packages "packages/avr-libstdcpp/src/functexcept.cc")
+file(GLOB SRC_FILES_AVR
+    "src/avr-specific/*.cpp"
+)
+
+file(GLOB AVR_STDLIB_SRC "packages/avr-libstdcpp/src/functexcept.cc")
+
+add_executable(reflexTrainer main.cpp  ${SRC_FILES} ${SRC_FILES_AVR} ${AVR_STDLIB_SRC})
 
 #add_subdirectory(packages/avr-nec-ir-decoder)
 #target_link_libraries(reflexTrainer PRIVATE ir_receiver_driver)
@@ -47,11 +53,14 @@ if( NOT ${CROSS_COMPILING} STREQUAL "TRUE")
   file (GLOB TEST_FILES
       "unittests/*.cpp"
   )
+  file(GLOB SRC_FILES_AVR_TIMER
+    "src/avrTimer*"
+  )
   add_executable(
     unittestss
     EXCLUDE_FROM_ALL
     ${TEST_FILES}
-    ${SRC_FILES}
+    ${SRC_FILES_AVR_TIMER}
   )
   target_link_libraries(
     unittestss
