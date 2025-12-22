@@ -1,5 +1,6 @@
 #include "avrTimerAdapterClock.h"
 #include "avrTimerAdapterTimer.h"
+#include <avr/io.h>
 #include <avr/interrupt.h>
 #include "timers.h"
 
@@ -30,9 +31,9 @@ TimerUtils::AvrTimerInterface Timer2Interface = {
     &OCR2B,
 };
 
-AvrTimerAdapterClock clock{Timer1Interface};
-AvrTimerAdapterTimer avrTimer0{Timer0Interface};
-AvrTimerAdapterTimer avrTimer2{Timer2Interface};
+AvrTimerAdapterClock myTimers::clock{Timer1Interface};
+AvrTimerAdapterTimer myTimers::avrTimer0{Timer0Interface};
+AvrTimerAdapterTimer myTimers::avrTimer2{Timer2Interface};
 
 ISR(TIMER1_OVF_vect) {
 	clock.overflowHandler();

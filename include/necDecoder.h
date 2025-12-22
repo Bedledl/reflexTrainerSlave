@@ -3,6 +3,7 @@
 
 #include "stdint.h"
 #include "avrTimerAdapterClock.h"
+#include "functional"
 
 constexpr uint16_t INITIAL_BURST_MICROS = 9 * 1000;
 constexpr uint16_t INITIAL_PAUSE_MICROS = 45 * 100;
@@ -32,6 +33,9 @@ public:
     */
     void waitForNecHeader();
     void irInputCallback();
+    ReceptionState getState () const {
+        return state;
+    }
 
 private:
     void updateTimestamp();
@@ -41,11 +45,11 @@ private:
     void evaluateDuration(const uint16_t &expectedDurationMicros, ReceptionState nextState, bool wasBurst);
     void decodeBitPause();
 
-private:
     ReceptionState state = ReceptionState::NOT_STARTED;
     uint64_t last_timestamp;
     uint8_t bit_number = 0;
     uint32_t data;
+    std::function<void(void)> temp;
 };
 
 extern NecDecoder theOneAndOnlyNecDecoder;

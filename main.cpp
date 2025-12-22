@@ -1,6 +1,6 @@
 #define F_CPU 1000000UL
 
-//#include "necDecoder.h"
+#include "necDecoder.h"
 //#include ""
 
 
@@ -20,6 +20,6 @@
 //struct IR_Packet received_packet;
 int main()
 {
-    //theOneAndOnlyNecDecoder.waitForNecHeader();
+    theOneAndOnlyNecDecoder.waitForNecHeader();
 
 }

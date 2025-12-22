@@ -8,7 +8,7 @@
       "cacheVariables": {
         "CMAKE_SYSTEM_NAME": "Generic",
         "CMAKE_C_COMPILER": "avr-gcc",
-        "CMAKE_CXX_COMPILER": "avr-g++",
+        "CMAKE_CXX_COMPILER": "/usr/local/avr/avr-gcc-15.2.0-x64-linux/bin/avr-g++",
         "CMAKE_CXX_FLAGS": " -DF_CPU=1000000UL -mmcu=atmega328p -Os  -Wall -Wextra -Werror",
         "CMAKE_FIND_ROOT_PATH_MODE_PROGRAM": "NEVER",
         "CMAKE_FIND_ROOT_PATH_MODE_LIBRARY": "ONLY",

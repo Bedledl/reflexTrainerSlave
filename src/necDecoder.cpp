@@ -1,5 +1,6 @@
 #include "necDecoder.h"
 #include "timers.h"
+#include "functional"
 
 typedef AvrTimerAdapterClock::EdgeType EdgeType;
 
@@ -17,7 +18,7 @@ void NecDecoder::waitForNecHeader()
 
 void NecDecoder::updateTimestamp()
 {
-    last_timestamp = clock.getInputCaptureTimeMicros();
+    last_timestamp = myTimers::clock.getInputCaptureTimeMicros();
 }
 
 bool NecDecoder::fitsExpectedTime(const uint64_t &actualDurationMicros, const uint16_t &expectedDurationMicros) const
@@ -27,12 +28,11 @@ bool NecDecoder::fitsExpectedTime(const uint64_t &actualDurationMicros, const ui
 
 void NecDecoder::enableInputInterrupt(EdgeType edgeType)
 {
-    (void)edgeType;
-    // clock.enableInputCaptureInterrupts(
-    //      edgeType,
-    //      [](){},//theOneAndOnlyNecDecoder.irInputCallback();
-    //      true // noise cancelling
-    //  );
+    myTimers::clock.enableInputCaptureInterrupts(
+         edgeType,
+         std::function<void(void)>{necInputInterrupt},
+         true // noise cancelling
+     );
     // TODO make something with result
 }
 
@@ -46,7 +46,7 @@ void NecDecoder::resetToWaitingForInitialBurst()
 
 void NecDecoder::evaluateDuration(const uint16_t &expectedDurationMicros, ReceptionState nextState, bool wasBurst)
 {
-    auto timestamp = clock.getInputCaptureTimeMicros();
+    auto timestamp = myTimers::clock.getInputCaptureTimeMicros();
     if (fitsExpectedTime(timestamp - last_timestamp, expectedDurationMicros))
     {
         last_timestamp = timestamp;
@@ -100,7 +100,7 @@ void NecDecoder::irInputCallback()
 }
 void NecDecoder::decodeBitPause()
 {
-    auto timestamp = clock.getInputCaptureTimeMicros();
+    auto timestamp = myTimers::clock.getInputCaptureTimeMicros();
     if (fitsExpectedTime(timestamp - last_timestamp, BIT_PAUSE_0))
     {
         // set bit 0, should already be set
