@@ -1,0 +1,6 @@
+[submodule "packages/--force"]
+	path = packages/--force
+	url = git@github.com:buserror/simavr.git
+[submodule "packages/simavr"]
+	path = packages/simavr
+	url = git@github.com:buserror/simavr.git
