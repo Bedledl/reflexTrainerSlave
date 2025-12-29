@@ -4,3 +4,6 @@
 [submodule "packages/simavr"]
 	path = packages/simavr
 	url = git@github.com:buserror/simavr.git
+[submodule "packages/avr-libstdcpp"]
+	path = packages/avr-libstdcpp
+	url = https://github.com/modm-io/avr-libstdcpp.git
