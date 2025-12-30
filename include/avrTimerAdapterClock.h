@@ -2,7 +2,7 @@
 #define AVRTIMERADAPTERCLOCK_H
 #include <stdint.h>
 #include "avrTimerInterface.h"
-#include "functional"
+#include <functional>
 
 class AvrTimerAdapterClock
 {

@@ -5,12 +5,12 @@
 #include "timers.h"
 
 TimerUtils::AvrTimerInterface16Bit Timer1Interface =
-{
-    &TCCR1A,
-    &TCCR1B,
-    &TCNT1,
-    &TIMSK1,
-    &ICR1,
+    {
+        &TCCR1A,
+        &TCCR1B,
+        &TCNT1,
+        &TIMSK1,
+        &ICR1,
 };
 
 TimerUtils::AvrTimerInterface Timer0Interface = {
@@ -35,20 +35,24 @@ AvrTimerAdapterClock myTimers::clock{Timer1Interface};
 AvrTimerAdapterTimer myTimers::avrTimer0{Timer0Interface};
 AvrTimerAdapterTimer myTimers::avrTimer2{Timer2Interface};
 
-ISR(TIMER1_OVF_vect) {
-	clock.overflowHandler();
+ISR(TIMER1_OVF_vect)
+{
+    myTimers::clock.overflowHandler();
 }
 
-ISR(TIMER1_CAPT_vect) {
-    clock.inputCaptureInterruptHandler();
+ISR(TIMER1_CAPT_vect)
+{
+    myTimers::clock.inputCaptureInterruptHandler();
 }
 
-ISR(TIMER0_COMPA_vect) {
-	avrTimer0.compareMatchHandlerA();
+ISR(TIMER0_COMPA_vect)
+{
+    myTimers::avrTimer0.compareMatchHandlerA();
 }
 
-ISR(TIMER2_COMPA_vect) {
-	avrTimer2.compareMatchHandlerA();
+ISR(TIMER2_COMPA_vect)
+{
+    myTimers::avrTimer2.compareMatchHandlerA();
 }
 
 void setPrescaling8ForTimer(volatile uint8_t *controlRegisterB)

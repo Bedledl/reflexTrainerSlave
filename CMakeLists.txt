@@ -29,20 +29,27 @@ file(GLOB SRC_FILES_AVR
     "src/avr-specific/*.cpp"
 )
 
-file(GLOB AVR_STDLIB_SRC "packages/avr-libstdcpp/src/functexcept.cc")
+add_subdirectory(packages)
 
-add_executable(reflexTrainer main.cpp  ${SRC_FILES} ${SRC_FILES_AVR} ${AVR_STDLIB_SRC})
+add_library(reflexTrainerUtilGeneral STATIC ${SRC_FILES})
+add_library(reflexTrainerUtilAvrSpecific STATIC ${SRC_FILES_AVR})
+add_executable(reflexTrainerMain main.cpp ${SRC_FILES_AVR} )
 
-#add_subdirectory(packages/avr-nec-ir-decoder)
-#target_link_libraries(reflexTrainer PRIVATE ir_receiver_driver)
-target_include_directories(reflexTrainer PRIVATE include)
 
-target_include_directories(
-  reflexTrainer
-  PRIVATE
-  packages/avr-libstdcpp/include
-)
+add_library(reflexTrainerUtilGeneral::reflexTrainerUtilGeneral ALIAS reflexTrainerUtilGeneral)
+add_library(reflexTrainerUtilAvrSpecific::reflexTrainerUtilAvrSpecific  ALIAS reflexTrainerUtilAvrSpecific)
 
+
+
+target_include_directories(reflexTrainerUtilGeneral PUBLIC include)
+if( ${CROSS_COMPILING} STREQUAL "TRUE")
+target_link_libraries(reflexTrainerUtilGeneral PUBLIC avr-libstdcpp::avr-libstdcpp)
+endif()
+
+target_link_libraries(reflexTrainerUtilAvrSpecific PUBLIC reflexTrainerUtilGeneral)
+target_link_libraries(reflexTrainerMain PUBLIC reflexTrainerUtilAvrSpecific::reflexTrainerUtilAvrSpecific)
+
+add_subdirectory(sim-tests)
 
 ################# Unittests #################
 # Enable GoogleTest
@@ -79,3 +86,4 @@ if( NOT ${CROSS_COMPILING} STREQUAL "TRUE")
   gtest_discover_tests(unittestss)
 
 endif()
+
