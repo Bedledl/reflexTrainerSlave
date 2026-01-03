@@ -33,7 +33,7 @@ add_subdirectory(packages)
 
 add_library(reflexTrainerUtilGeneral STATIC ${SRC_FILES})
 add_library(reflexTrainerUtilAvrSpecific STATIC ${SRC_FILES_AVR})
-add_executable(reflexTrainerMain main.cpp ${SRC_FILES_AVR} )
+add_executable(reflexTrainerMain main.cpp ${SRC_FILES_AVR})
 
 
 add_library(reflexTrainerUtilGeneral::reflexTrainerUtilGeneral ALIAS reflexTrainerUtilGeneral)

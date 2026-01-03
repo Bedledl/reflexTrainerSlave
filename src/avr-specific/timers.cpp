@@ -3,6 +3,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include "timers.h"
+#include "print.h"
 
 TimerUtils::AvrTimerInterface16Bit Timer1Interface =
     {
@@ -37,6 +38,7 @@ AvrTimerAdapterTimer myTimers::avrTimer2{Timer2Interface};
 
 ISR(TIMER1_OVF_vect)
 {
+    print("Timer1 overflow\n");
     myTimers::clock.overflowHandler();
 }
 

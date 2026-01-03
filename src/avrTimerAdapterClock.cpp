@@ -1,9 +1,11 @@
 #include "avrTimerAdapterClock.h"
 #include "avrTimerInterface.h"
 #include <utility>
+#include "print.h"
 
 AvrTimerAdapterClock::AvrTimerAdapterClock(TimerUtils::AvrTimerInterface16Bit timerInterface) : timerInterface{std::move(timerInterface)}
 {
+    print("clock init\n");
     *(timerInterface.controlRegisterA) = 0x0; // sets it to normal mode, so that it resets to 0 after an overflow
     *(timerInterface.counterRegister) = 0x0;
     TimerUtils::setPrescaling8ForTimer(timerInterface.controlRegisterB);
@@ -16,12 +18,14 @@ AvrTimerAdapterClock::AvrTimerAdapterClock(TimerUtils::AvrTimerInterface16Bit ti
 
 void AvrTimerAdapterClock::overflowHandler()
 {
+    print("overflow handler\n");
     systemMicroseconds += overflowMicroseconds;
 }
 
 void AvrTimerAdapterClock::inputCaptureInterruptHandler()
 {
-    if (inputCaptureCallback != nullptr) {
+    print("input capture interrupt handler\n");
+    if (inputCaptureCallback) {
         auto cb = inputCaptureCallback;
         inputCaptureCallback = nullptr;
         cb();
@@ -58,7 +62,8 @@ uint64_t AvrTimerAdapterClock::gpt_get_time_elapsed()
 
 bool AvrTimerAdapterClock::enableInputCaptureInterrupts(const EdgeType edge, std::function<void(void)> callback, bool noiseCanceler)
 {
-    if (inputCaptureCallback != nullptr) {
+    print("Enable Input capture\n");
+    if (inputCaptureCallback) {
         return false; // already enabled
     }
     inputCaptureCallback = callback;
@@ -79,16 +84,19 @@ bool AvrTimerAdapterClock::enableInputCaptureInterrupts(const EdgeType edge, std
     // enable input capture interrupt
     *(timerInterface.interruptMaskRegister) |= (1 << 5); // TICIE1 bit
 
+    print("Enabling of Input Capture successful\n");
     return true;
 }
 void AvrTimerAdapterClock::disableInputCaptureInterrupts()
 {
+    print("Disable Input capture\n");
     // disable input capture interrupt
     *(timerInterface.interruptMaskRegister) &= ~(1 << 5); // TICIE1 bit
     inputCaptureCallback = nullptr;
 }
 uint16_t AvrTimerAdapterClock::getInputCaptureRegister(bool addNoiseCancelerDelay)
 {
+    print("Get Input Capture Ticks\n");
     // returns the value of the input capture register (ICR1) (ticks not us!)
     return *timerInterface.inputCaptureRegister + (addNoiseCancelerDelay ? 4 : 0);
 }
@@ -96,7 +104,10 @@ uint16_t AvrTimerAdapterClock::getInputCaptureRegister(bool addNoiseCancelerDela
 uint64_t AvrTimerAdapterClock::getInputCaptureTimeMicros(bool addNoiseCancelerDelay)
 {
     uint16_t inputCaptureTicks = getInputCaptureRegister(addNoiseCancelerDelay);
+    print("Input Capture Ticks: %u\n", inputCaptureTicks);
     auto microseconds = systemMicroseconds;
+    print("System Microseconds:\n");
+    printuint64(microseconds);
     const auto currentCounterTicks = *timerInterface.counterRegister;
 
 
@@ -110,6 +121,7 @@ uint64_t AvrTimerAdapterClock::getInputCaptureTimeMicros(bool addNoiseCancelerDe
              + static_cast<uint64_t>(TimerUtils::ticksToMicrosecondsPrescaled8(inputCaptureTicks));
     }
     // has happened an overflow!
+    print("There has been an overflow\n");
     return microseconds
          - overflowMicroseconds
          + static_cast<uint64_t>(TimerUtils::ticksToMicrosecondsPrescaled8(inputCaptureTicks));

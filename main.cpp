@@ -18,6 +18,8 @@
 
 
 //struct IR_Packet received_packet;
+
+// PB0 er input capture pin
 int main()
 {
     theOneAndOnlyNecDecoder.waitForNecHeader();
